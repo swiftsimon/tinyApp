@@ -7,10 +7,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 function generateRandomString() {
-
+  return Math.random().toString(36).substring(2, 8);
 };
 
-generateRandomString();
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.com",
@@ -26,19 +25,46 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id, urls: urlDatabase };
   res.render("urls_show", templateVars);
 });
 
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+app.get("/u/:shortURL", (req, res) => {
+  let data = urlDatabase;
+  let longURL = data[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 //corresponds to method "POST" in urls_new
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("OK");
+  let data = urlDatabase;
+  // console.log("U", data);
+  // let longURL = data[random];
+  // console.log("V", req.body);
+    // returns { longURL: 'fred.com' }
+  var random = generateRandomString();
+    console.log("random", random);
+    //console.log(random);
+      let longURL = req.body.longURL;
+      let shortURL = random;
+   console.log("long", longURL);
+   console.log("short", shortURL);
+
+   urlDatabase.shortURL = longURL;
+   console.log("new database", urlDatabase);
+  // res.send("OK");
+  res.redirect(`/urls/${random}`);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  console.log("X",req.body);
+  let longURL = urlDatabase[shortURL];
+  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {
