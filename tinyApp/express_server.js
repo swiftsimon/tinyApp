@@ -13,12 +13,13 @@ function generateRandomString() {
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.com",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
 };
 
 app.get("/", (req, res) => {
-  res.end("Hello!\n");
+  res.redirect("/urls");
 });
+
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
@@ -47,24 +48,34 @@ app.post("/urls", (req, res) => {
   // let longURL = data[random];
   // console.log("V", req.body);
     // returns { longURL: 'fred.com' }
-  var random = generateRandomString();
-    console.log("random", random);
+  let random = generateRandomString();
+    // console.log("random", random);
     //console.log(random);
       let longURL = req.body.longURL;
       let shortURL = random;
-   console.log("long", longURL);
-   console.log("short", shortURL);
+   // console.log("long", longURL);
+   //console.log("short", shortURL);
 
-   urlDatabase.shortURL = longURL;
-   console.log("new database", urlDatabase);
+   urlDatabase[shortURL] = longURL;
+   // console.log("new database", urlDatabase);
   // res.send("OK");
-  res.redirect(`/urls/${random}`);
+  res.redirect(`/u/${random}`);  // /urls/ to /u/
 });
 
 app.get("/u/:shortURL", (req, res) => {
   console.log("X",req.body);
-  let longURL = urlDatabase[shortURL];
+  let longURL = urlDatabase["req.params.shortURL"];
   res.redirect(longURL);
+});
+
+
+// this is the delete route
+app.post("/urls/:id/delete", (req, res)=> {
+  console.log("delete body", req.body);
+  //**insert delete functionality here
+  delete urlDatabase[req.params.id];
+  console.log("see", urlDatabase[req.params.id]);
+  res.redirect('/urls')
 });
 
 app.listen(PORT, () => {

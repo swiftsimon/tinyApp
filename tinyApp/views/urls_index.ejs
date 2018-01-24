@@ -9,14 +9,19 @@
     <header>
         <% include partials/_header %>
     </header>
-
     <ul><% for (urlFound in urls) { %>
         <li>
           <%= urlFound + ":" + urls[urlFound] %>
         </li>
+        <!--insert <%= urlFound %> to pull the id number when delete button is pressed -->
+      <form method="POST" action="/urls/<%= urlFound%>/delete">
+        <input type="submit" value="delete">
+      </form>
       <% } %>
+
     </ul>
-    <p><a href='urls/new'> shorten a new url </a></p>
+
+    <p><a href='/urls/new'> shorten a new url </a></p>
 
 
 </body>
