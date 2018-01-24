@@ -13,6 +13,7 @@
     <h2> Short URL: <%= shortURL %> </h2>
 
       <form method="POST" action="/urls/<%= shortURL %>/update">
+        <!-- this "name" newURL is how you use this input in your js file!! -->
         <input name="newURL" placeholder= "<%= urls[shortURL] %>" style="width: 250px">
         <input type="submit" value="UPDATE">
       </form>

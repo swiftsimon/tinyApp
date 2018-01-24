@@ -52,14 +52,11 @@ app.post("/urls/:id/delete", (req, res)=> {
 });
 
 // this is the update page linked from edit button
-// app.post("/urls/:id", (req, res)=> {
-//  // let templateVars =
-//  //  // let urlDatabase
-//  //  urlDatabase[req.params.id] = req.body;
-
-//  //  //console.log("see", urlDatabase[req.params.id]);
-//  //  res.redirect('/urls');
-// });
+app.post("/urls/:id", (req, res)=> {
+  //console.log("from edit button", req.params.id);
+  let short = req.params.id;
+  res.redirect(`/urls/${short}`); //${short} is a place holder (use ` not " nor ')
+});
 
 // on update press call this
 app.post("/urls/:id/update", (req, res)=> {
