@@ -2,7 +2,9 @@ var express = require("express");
 var app = express();
 var PORT = process.env.port || 8080; //default port is 8080
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
@@ -10,7 +12,7 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 };
 
-//test git branch
+
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.com",
   "9sm5xK": "http://www.google.com",
@@ -28,6 +30,14 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
+});
+
+//on Login POST call
+app.post("/login", (req, res) => {
+  //console.log("USER", req.body.username); // returns simon
+  res.cookie("username", req.body.username);
+  //set the cookie parameter called username to the value submitted in the form
+  res.redirect('/urls');
 });
 
 // show page
