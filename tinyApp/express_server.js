@@ -18,20 +18,6 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
-app.get("/", (req, res) => {
-  res.redirect("/urls");
-});
-
-
-app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
-});
-
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
-
 //on Login POST call
 app.post("/login", (req, res) => {
   //console.log("USER", req.body.username); // returns simon
@@ -40,9 +26,34 @@ app.post("/login", (req, res) => {
   res.redirect('/urls');
 });
 
+// on logout POST call
+app.post("/logout", (req, res) => {
+  //clear the cookie set by submitting username form
+  res.clearCookie(req.body.username);
+  res.redirect('/urls');
+});
+
+app.get("/", (req, res) => {
+  res.redirect("/urls");
+});
+
+
+app.get("/urls", (req, res) => {
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  //below, render this page with access to templateVars
+  res.render("urls_index", templateVars);
+});
+
+app.get("/urls/new", (req, res) => {
+    let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  res.render("urls_new", templateVars);
+});
+
+
+
 // show page
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, urls: urlDatabase };
+  let templateVars = { shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
@@ -78,6 +89,8 @@ app.post("/urls/:id/update", (req, res)=> {
 //corresponds to method "POST" in urls_new
 app.post("/urls", (req, res) => {
   let data = urlDatabase;
+    let templateVars = { shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"] };
+
   // console.log("U", data);
   // let longURL = data[random];
   // console.log("V", req.body);
