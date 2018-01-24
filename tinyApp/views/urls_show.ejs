@@ -2,14 +2,21 @@
 
 <html lang="en">
 <head>
-  <title>TinyApp</title>
+  <title>Tiny App</title>
 </head>
 <body>
 
   <header>
-        <% include partials/_header %>
+        <h1> View and Update </h1>
   </header>
-     <p> <%= urls[shortURL] + " ... " + "becomes" + " ... " + shortURL  %> </p>
+
+    <h2> Short URL: <%= shortURL %> </h2>
+
+      <form method="POST" action="/urls/<%= shortURL %>/update">
+        <input name="newURL" placeholder= "<%= urls[shortURL] %>" style="width: 250px">
+        <input type="submit" value="UPDATE">
+      </form>
+
 
 
 </body>

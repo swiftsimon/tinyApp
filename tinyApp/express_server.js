@@ -30,6 +30,7 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+// show page
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id, urls: urlDatabase };
   res.render("urls_show", templateVars);
@@ -39,6 +40,32 @@ app.get("/u/:shortURL", (req, res) => {
   let data = urlDatabase;
   let longURL = data[req.params.shortURL];
   res.redirect(longURL);
+});
+
+// this is the delete route
+app.post("/urls/:id/delete", (req, res)=> {
+  console.log("delete body", req.body);
+  //**insert delete functionality here
+  delete urlDatabase[req.params.id];
+  //console.log("see", urlDatabase[req.params.id]);
+  res.redirect('/urls');
+});
+
+// this is the update page linked from edit button
+// app.post("/urls/:id", (req, res)=> {
+//  // let templateVars =
+//  //  // let urlDatabase
+//  //  urlDatabase[req.params.id] = req.body;
+
+//  //  //console.log("see", urlDatabase[req.params.id]);
+//  //  res.redirect('/urls');
+// });
+
+// on update press call this
+app.post("/urls/:id/update", (req, res)=> {
+  console.log("update body", req.body);
+  urlDatabase[req.params.id] = req.body.newURL;
+  res.redirect('/urls');
 });
 
 //corresponds to method "POST" in urls_new
@@ -69,14 +96,6 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 
-// this is the delete route
-app.post("/urls/:id/delete", (req, res)=> {
-  console.log("delete body", req.body);
-  //**insert delete functionality here
-  delete urlDatabase[req.params.id];
-  console.log("see", urlDatabase[req.params.id]);
-  res.redirect('/urls')
-});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
