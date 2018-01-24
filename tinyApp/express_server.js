@@ -12,10 +12,23 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 };
 
-// new branch test registration
+
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.com",
   "9sm5xK": "http://www.google.com",
+};
+
+const users = {
+  "s7ui9f" : {
+    id: "s7ui9f",
+    email: "user1@example.com",
+    password: "tricky"
+  },
+  "ax334d" : {
+    id: "ax334d",
+    email: "user2@example.com",
+    password: "cool555"
+  }
 };
 
 //on Login POST call
@@ -49,6 +62,18 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// REGISTER GET endpoint
+app.get("/register", (req, res) => {
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  res.render("urls_register", templateVars);
+});
+
+// REGISTER POST
+app.post("/register", (req, res) => {
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  // **input some functionality here
+  res.redirect('/urls');
+});
 
 
 // show page
