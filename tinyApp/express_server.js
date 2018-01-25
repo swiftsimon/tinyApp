@@ -81,7 +81,7 @@ app.post("/register", (req, res) => {
   // clear a cookie in case it exists
   res.clearCookie("username");
   // set the cookie
-  res.cookie("username", randomID);
+  res.cookie("username", randomID); //** should "username" be userID??????
   console.log(users);
   //adds new user object
   //console.log("request", req.body);
