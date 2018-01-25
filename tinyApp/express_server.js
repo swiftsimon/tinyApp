@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
-
+// only render on GET
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   //below, render this page with access to templateVars
@@ -70,22 +70,50 @@ app.get("/register", (req, res) => {
 
 // REGISTER POST
 app.post("/register", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"], user: users };
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"], existingUsers: users, id : req.cookies["user_id"] };
   let randomID = generateRandomString();
-  console.log(randomID);
-  users[randomID] = {
-    id: randomID,
-    email: req.body.email,
-    password: req.body.password
-  }
+  //console.log(randomID);
+  testLoginInput();
+  // if email or password are empty strings, send response 400 status code
+  function testLoginInput () {
+    if(!req.body.email || !req.body.password) {
+    //return status code 404
+    console.log("404");
+    res.status(404);
+    res.render('404Error');
+  } else if (userExists(req.body.email) == true){
+    // check if username already exists
+    // send 400 status code
+      res.status(400);
+      res.render('400error');
+      //res.status(400).send();
+  } else {
+      users[randomID] = {
+        id: randomID,
+        email: req.body.email,
+        password: req.body.password
+      };
   // clear a cookie in case it exists
-  res.clearCookie("username");
+    res.clearCookie("username");
   // set the cookie
-  res.cookie("username", randomID); //** should "username" be userID??????
-  console.log(users);
+    res.cookie("user_id", randomID);
+    console.log("USERS", users);
   //adds new user object
   //console.log("request", req.body);
-  res.redirect('/urls');
+    res.redirect('/urls');
+  }
+ }
+
+ function userExists(email) {
+   for (let key in users) {
+    if(users[key].email == email) {
+      return true;
+    }
+  }
+
+  return false;
+ };
+
 });
 
 
@@ -150,7 +178,6 @@ app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase["req.params.shortURL"];
   res.redirect(longURL);
 });
-
 
 
 app.listen(PORT, () => {
