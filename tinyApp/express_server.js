@@ -42,7 +42,7 @@ app.post("/login", (req, res) => {
 // on logout POST call
 app.post("/logout", (req, res) => {
   //clear the cookie set by submitting username form
-  res.clearCookie(req.body.username);
+  res.clearCookie("username");
   res.redirect('/urls');
 });
 
@@ -70,8 +70,21 @@ app.get("/register", (req, res) => {
 
 // REGISTER POST
 app.post("/register", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
-  // **input some functionality here
+  let templateVars = { urls: urlDatabase, username: req.cookies["username"], user: users };
+  let randomID = generateRandomString();
+  console.log(randomID);
+  users[randomID] = {
+    id: randomID,
+    email: req.body.email,
+    password: req.body.password
+  }
+  // clear a cookie in case it exists
+  res.clearCookie("username");
+  // set the cookie
+  res.cookie("username", randomID);
+  console.log(users);
+  //adds new user object
+  //console.log("request", req.body);
   res.redirect('/urls');
 });
 
@@ -90,7 +103,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 // this is the delete route
 app.post("/urls/:id/delete", (req, res)=> {
-  console.log("delete body", req.body);
+  //console.log("delete body", req.body);
   //**insert delete functionality here
   delete urlDatabase[req.params.id];
   //console.log("see", urlDatabase[req.params.id]);
@@ -111,13 +124,11 @@ app.post("/urls/:id/update", (req, res)=> {
   res.redirect('/urls');
 });
 
-//corresponds to method "POST" in urls_new
+//POST new url
 app.post("/urls", (req, res) => {
   let data = urlDatabase;
     let templateVars = { shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"] };
-
   // console.log("U", data);
-  // let longURL = data[random];
   // console.log("V", req.body);
     // returns { longURL: 'fred.com' }
   let random = generateRandomString();
