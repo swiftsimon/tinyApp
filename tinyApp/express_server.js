@@ -34,7 +34,7 @@ const users = {
 //on Login POST call
 app.post("/login", (req, res) => {
   //console.log("USER", req.body.username); // returns simon
-  res.cookie("username", req.body.username);
+  res.cookie("user_id", req.cookies.user_id);
   //set the cookie parameter called username to the value submitted in the form
   res.redirect('/urls');
 });
@@ -42,36 +42,62 @@ app.post("/login", (req, res) => {
 // on logout POST call
 app.post("/logout", (req, res) => {
   //clear the cookie set by submitting username form
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect('/urls');
 });
 
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  let current_user = req.cookies.user_id;
+  console.log("DDD", req.cookies.user_id);
+  if (current_user) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
-// only render on GET
+// LOGIN GET
+app.get("/login", (req, res) => {
+  res.render("urls_login");
+});
+
+
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  const userId = req.cookies["user_id"];
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[userId],
+  };
   //below, render this page with access to templateVars
   res.render("urls_index", templateVars);
 });
 
+
 app.get("/urls/new", (req, res) => {
-    let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
-  res.render("urls_new", templateVars);
+  const userId = req.cookies["user_id"];
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[userId],
+  };  res.render("urls_new", templateVars);
 });
 
 // REGISTER GET endpoint
 app.get("/register", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
-  res.render("urls_register", templateVars);
+  const userId = req.cookies["user_id"];
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[userId],
+  };  res.render("urls_register", templateVars);
 });
 
 // REGISTER POST
 app.post("/register", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"], existingUsers: users, id : req.cookies["user_id"] };
-  let randomID = generateRandomString();
+  const userId = req.cookies["user_id"];
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[userId],
+  };
+    let randomID = generateRandomString();
   //console.log(randomID);
   testLoginInput();
   // if email or password are empty strings, send response 400 status code
@@ -94,7 +120,7 @@ app.post("/register", (req, res) => {
         password: req.body.password
       };
   // clear a cookie in case it exists
-    res.clearCookie("username");
+    res.clearCookie("user_id");
   // set the cookie
     res.cookie("user_id", randomID);
     console.log("USERS", users);
@@ -119,7 +145,11 @@ app.post("/register", (req, res) => {
 
 // show page
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"] };
+  const userId = req.cookies["user_id"];
+  let templateVars = { shortURL: req.params.id,
+    urls: urlDatabase,
+    user: users[userId] };
+
   res.render("urls_show", templateVars);
 });
 
@@ -154,8 +184,13 @@ app.post("/urls/:id/update", (req, res)=> {
 
 //POST new url
 app.post("/urls", (req, res) => {
-  let data = urlDatabase;
-    let templateVars = { shortURL: req.params.id, urls: urlDatabase, username: req.cookies["username"] };
+    let data = urlDatabase;
+    const userId = req.cookies["user_id"];
+
+    let templateVars = { shortURL: req.params.id,
+      urls: urlDatabase,
+      user: users[userId]};
+
   // console.log("U", data);
   // console.log("V", req.body);
     // returns { longURL: 'fred.com' }

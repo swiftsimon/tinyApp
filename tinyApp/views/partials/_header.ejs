@@ -7,18 +7,19 @@
 <body>
   <h1> TinyApp! </h1>
 
-    <form method="POST" action="/login">
-        <p> insert <input name="username" placeholder="username">
-          <% if(username){ %>
-            <% username = username; %>
-              <form method="POST" action="/logout">
-              <input type="submit" value="log out">
-      <% } else{ %>
-        <input type="submit" value="ENTER">
-      <% } %>
-      </p>
-      </form>current user is <%= username %>
-      <!-- username is accessible via templateVars username: req.cookies["username"] -->
+  <% if(user) { %>
+    <h2> Welcome, <%= user.email %>
+    <form method="POST" action="/logout">
+        <input type="submit" value="logout">
+    </form>
+
+    <% } else { %>
+     <form method="POST" action="/login">
+        <input type="submit" value="login">
+
+     <% } %>
+
+
 
 </body>
 </html>
