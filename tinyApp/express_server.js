@@ -31,12 +31,48 @@ const users = {
   }
 };
 
-//on Login POST call
+//on Login POST call*************
 app.post("/login", (req, res) => {
-  //console.log("USER", req.body.username); // returns simon
-  res.cookie("user_id", req.cookies.user_id);
+  const username = req.body.login_email;
+  const password = req.body.login_password;
+
+  const passLogin = checkPassword(username, password);
+  // if true, passLogin is object of user
+
+  console.log("user", username);
+  console.log("password", password);
+
+ function checkPassword(userEmail, password) {
+  if(!username || !password) {
+    console.log("No entry Login page");
+    res.redirect('/register');
+  }
+
+   for (let key in users) {
+    if(users[key].email == username &&
+      users[key].password == password ) {
+      console.log("XXXXX", users[key]);
+        return users[key];
+    }
+  }
+    console.log("password error");
+    return false;
+}
+
+
+  if (passLogin) {
+    // redirect to urls
+    res.cookie("user_id", passLogin.id);
+    res.redirect('/urls');
+
+  } else {
+    //send error
+    console.log("LOG IN ERROR");
+    res.status(401).send("Log in Error");
+  }
+
   //set the cookie parameter called username to the value submitted in the form
-  res.redirect('/urls');
+
 });
 
 // on logout POST call
@@ -48,7 +84,7 @@ app.post("/logout", (req, res) => {
 
 app.get("/", (req, res) => {
   let current_user = req.cookies.user_id;
-  console.log("DDD", req.cookies.user_id);
+  //console.log("home_user_id", req.cookies.user_id);
   if (current_user) {
     res.redirect('/urls');
   } else {
