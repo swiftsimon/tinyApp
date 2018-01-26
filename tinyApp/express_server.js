@@ -1,3 +1,4 @@
+
 var express = require("express");
 var app = express();
 var PORT = process.env.port || 8080; //default port is 8080
@@ -45,7 +46,6 @@ const users = {
   }
 };
 
-// XXXXXXXXXXXXXXXXXXX
 
 //POST new url
 app.post("/urls/new", (req, res) => {
@@ -106,6 +106,7 @@ app.post("/login", (req, res) => {
   }
   if (passLogin) {
     // redirect to urls
+    console.log("passLogin true")
     res.cookie("user_id", passLogin.id);
     res.redirect('/urls');
 
@@ -141,22 +142,46 @@ app.get("/login", (req, res) => {
 });
 
 
+
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   let templateVars = {
     urls: urlDatabase,
-    user: users[userId],
+    user: users,
   };
-  console.log("HERE", templateVars)
-  console.log("DATABASE", urlDatabase);
-  console.log("AAA", [req.params.id]);
+    console.log("COOKIE", req.cookies["user_id"]);
+    console.log("COOKIE_USER", users[req.cookies["user_id"]].id);
 
-  //below, render this page with access to templateVars
-  res.render("urls_index", templateVars);
+    if (!req.cookies["user_id"]) {
+      res.send("Please Log In");
+      console.log("access denied");
+      return;
+    } else {
+      if (req.cookies["user_id"] === users[req.cookies["user_id"]].id) {
+
+        templateVars.urls = urlsForUser(req.cookies["user_id"]);
+        res.render("urls_index", templateVars);
+
+    } else {
+      res.send("Please Log In");
+      console.log("access denied again");
+    }
+  }
+
+
+
+
 });
 
-// 000000000000000
-
+    function urlsForUser(id) {
+          let filteredURL = {};
+          for (url in urlDatabase) {
+             if (id === urlDatabase[url].id) {
+            filteredURL[url] = urlDatabase[url];
+          }
+        }
+          return filteredURL;
+        };
 
 app.get("/urls/new", (req, res) => {
 // check if they are logged in
@@ -220,7 +245,7 @@ app.post("/register", (req, res) => {
   // clear a cookie in case it exists
     res.clearCookie("user_id");
   // set the cookie
-    res.cookie("user_id", randomID);
+    res.cookie("user_id", randomID);   // SET COOKIE
     console.log("USERS", users);
   //adds new user object
   //console.log("request", req.body);
@@ -260,7 +285,6 @@ app.get("/u/:shortURL", (req, res) => {
 // this is the delete route
 app.post("/urls/:id/delete", (req, res)=> {
   //console.log("delete body", req.body);
-  //**insert delete functionality here
   delete urlDatabase[req.params.id];
   //console.log("see", urlDatabase[req.params.id]);
   res.redirect('/urls');
