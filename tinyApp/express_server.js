@@ -5,7 +5,13 @@ var PORT = process.env.port || 8080; //default port is 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const bcrypt = require('bcrypt');
+const cookieSession = require('cookie-session');
 
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['jkh65gtyg4']
+}));
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
