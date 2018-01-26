@@ -17,17 +17,11 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-//req.cookies.user_id
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 };
 
-// OLD DATABASE
-// var urlDatabase = {
-//   "b2xVn2": {"http://www.lighthouselabs.com",
-//   "9sm5xK": "http://www.google.com",
-// };
 
 var urlDatabase = {
   "b2xVn2":
@@ -77,7 +71,7 @@ app.post("/urls/new", (req, res) => {
    // console.log("long", longURL);
    //console.log("short", shortURL);
 
-   urlDatabase[shortURL] = { longURL: longURL, id: req.cookies.user_id };
+   urlDatabase[shortURL] = { longURL: longURL, id: req.session.user_id };
    console.log("new database", urlDatabase);
   // res.send("OK");
   // X res.redirect(`/u/${random}`);  // /urls/ to /u/
@@ -116,7 +110,7 @@ app.post("/login", (req, res) => {
   if (passLogin) {
     // redirect to urls
     console.log("passLogin true")
-    res.cookie("user_id", passLogin.id);          // SETCOOKIE
+    req.session.user_id = passLogin.id;          // SETCOOKIE
     res.redirect('/urls');
 
   } else {
@@ -130,13 +124,14 @@ app.post("/login", (req, res) => {
 // on logout POST call
 app.post("/logout", (req, res) => {
   //clear the cookie set by submitting username form
-  res.clearCookie("user_id");
+  //res.clearCookie("user_id");
+  req.session = null;                               // clear COOKIE
   res.redirect('/urls');
 });
 
 
 app.get("/", (req, res) => {
-  let current_user = req.cookies.user_id;
+  let current_user = req.session.user_id;
   //console.log("home_user_id", req.cookies.user_id);
   if (current_user) {
     res.redirect('/urls');
@@ -153,7 +148,7 @@ app.get("/login", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let templateVars = {
     urls: urlDatabase,
     user: users,
@@ -161,14 +156,14 @@ app.get("/urls", (req, res) => {
     // console.log("COOKIE", req.cookies["user_id"]);
     // console.log("COOKIE_USER", users[req.cookies["user_id"]].id);
 
-    if (!req.cookies["user_id"]) {
+    if (!req.session.user_id) {
       res.send("Please Log In");
       console.log("access denied");
       return;
     } else {
-      if (req.cookies["user_id"] === users[req.cookies["user_id"]].id) {
+      if (req.session.user_id === users[req.session.user_id].id) {
 
-        templateVars.urls = urlsForUser(req.cookies["user_id"]);
+        templateVars.urls = urlsForUser(req.session.user_id);
         res.render("urls_index", templateVars);
 
     } else {
@@ -192,9 +187,9 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
 // check if they are logged in
-console.log("189 cookie", req.cookies["user_id"]);
+// console.log("189 cookie", req.cookies["user_id"]);
   for (let key in users) {
-    if (key === req.cookies["user_id"]) {
+    if (key === req.session.user_id) {
       let templateVars = {
     // only give access to that users urls
       urls: urlDatabase[key],
@@ -217,7 +212,7 @@ console.log("189 cookie", req.cookies["user_id"]);
 
 // REGISTER GET endpoint
 app.get("/register", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let templateVars = {
     urls: urlDatabase,
     user: users[userId],
@@ -226,11 +221,12 @@ app.get("/register", (req, res) => {
 
 // REGISTER POST
 app.post("/register", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let templateVars = {
     urls: urlDatabase,
     user: users[userId],
   };
+
     let randomID = generateRandomString();
   //console.log(randomID);
   testLoginInput();
@@ -259,10 +255,13 @@ app.post("/register", (req, res) => {
       // const password = users[randomID].password; // you will probably this from req.params
       // const hashedPassword = bcrypt.hashSync(password, 10);
       // console.log("HASh Pword", hashedPassword);
-  // clear a cookie in case it exists
-    res.clearCookie("user_id");
+   // clear a cookie in case it exists
+    //req.session = null;                     // clear COOKIE
+    res.clearCookie("session");
+    res.clearCookie("session.sig");
+
   // set the cookie
-    res.cookie("user_id", randomID);   // SETCOOKIE
+    req.session.user_id = randomID;   // SETCOOKIE
     console.log("USERS", users);
   //adds new user object
   //console.log("request", req.body);
@@ -292,14 +291,14 @@ app.get("/urls/:id", (req, res) => {
     urls: urlDatabase,
     user: users[userId] };
 
-    if (!req.cookies["user_id"]) {
+    if (!req.session.user_id) {
       res.send("Please Log In");
       console.log("access denied");
       return;
 
-      } else if (req.cookies["user_id"] === users[req.cookies["user_id"]].id) {
+      } else if (req.session.user_id === users[req.session.user_id].id) {
 
-        let urslexist = urlsForUser(req.cookies["user_id"]);
+        let urslexist = urlsForUser(req.session.user_id);
         let templateVars = {userURL: urslexist[req.params.id], shortURL: req.params.id, user: users[userId]};
             res.render("urls_show", templateVars);
 
