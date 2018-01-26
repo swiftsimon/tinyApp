@@ -11,13 +11,13 @@
     </header>
     <ul><% for (urlFound in urls) { %>
         <li>
-          <%= urlFound + ":" + urls[urlFound] %>
+          <%= urlFound + ":" + urls[urlFound].longURL %>
         </li>
         <!--insert <%= urlFound %> to pull the id number when delete button is pressed -->
       <form method="POST" action="/urls/<%= urlFound%>/delete">
         <input type="submit" value="delete">
       </form>
-      <form method="POST" action="/urls/<%= urlFound%>">
+      <form method="POST" action="/urls/<%= urlFound %>">
         <input type="submit" value="edit">
       </form>
       <% } %>
