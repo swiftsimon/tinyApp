@@ -4,6 +4,8 @@ var app = express();
 var PORT = process.env.port || 8080; //default port is 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcrypt');
+
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -96,8 +98,9 @@ app.post("/login", (req, res) => {
 
    for (let key in users) {
     if(users[key].email == username &&
-      users[key].password == password ) {
-      console.log("XXXXX", users[key]);
+      bcrypt.compareSync(password, users[key].password)) {
+     //&& users[key].password == password
+      console.log("LOG IN SUCCESS", users[key]);
         return users[key];
     }
   }
@@ -107,7 +110,7 @@ app.post("/login", (req, res) => {
   if (passLogin) {
     // redirect to urls
     console.log("passLogin true")
-    res.cookie("user_id", passLogin.id);
+    res.cookie("user_id", passLogin.id);          // SETCOOKIE
     res.redirect('/urls');
 
   } else {
@@ -183,21 +186,25 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
 // check if they are logged in
+console.log("189 cookie", req.cookies["user_id"]);
   for (let key in users) {
-    if (key == req.cookies["user_id"]) {
-  let templateVars = {
+    if (key === req.cookies["user_id"]) {
+      let templateVars = {
     // only give access to that users urls
-    urls: urlDatabase[req.params.id],
-    user: users[req.cookies.user_id],
-  };
+      urls: urlDatabase[key],
+      user: users[key],
+      };
+
       //allow access
-  res.render("urls_new", templateVars);
-  return;
-  } else {
+      res.render("urls_new", templateVars);
+      return;
+    } //end for loop
+
+  }
 // if not  redirect to login page
+    console.log("line 200");
    res.redirect('/login');
-  }
-  }
+
   //const userId = req.cookies["user_id"];
 });
 
@@ -238,12 +245,18 @@ app.post("/register", (req, res) => {
       users[randomID] = {
         id: randomID,
         email: req.body.email,
-        password: req.body.password
+        password: bcrypt.hashSync(req.body.password, 10)
       };
+
+      console.log("new user obj", users[randomID]);
+
+      // const password = users[randomID].password; // you will probably this from req.params
+      // const hashedPassword = bcrypt.hashSync(password, 10);
+      // console.log("HASh Pword", hashedPassword);
   // clear a cookie in case it exists
     res.clearCookie("user_id");
   // set the cookie
-    res.cookie("user_id", randomID);   // SET COOKIE
+    res.cookie("user_id", randomID);   // SETCOOKIE
     console.log("USERS", users);
   //adds new user object
   //console.log("request", req.body);
