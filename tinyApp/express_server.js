@@ -267,8 +267,8 @@ app.post("/register", (req, res) => {
 // show page update short url
 app.get("/urls/:id", (req, res) => {
 
-  const userId = req.cookies["user_id"];
-  //console.log("params", req.params.id);
+   const userId = req.cookies["user_id"];
+  // console.log("params", req.params.id);
   let templateVars = { shortURL: req.params.id,
     urls: urlDatabase,
     user: users[userId] };
@@ -280,33 +280,23 @@ app.get("/urls/:id", (req, res) => {
 
       } else if (req.cookies["user_id"] === users[req.cookies["user_id"]].id) {
 
-        templateVars.urls = urlsForUser(req.cookies["user_id"]);
-
-        for (key in templateVars.urls) {
-
-          if (req.params.id === key){
-            console.log("KEY", templateVars.urls.key);
-
+        let urslexist = urlsForUser(req.cookies["user_id"]);
+        let templateVars = {userURL: urslexist[req.params.id], shortURL: req.params.id, user: users[userId]};
             res.render("urls_show", templateVars);
 
           } else {
             res.send("This is not your URL");
           }
-        }
 
 
-    } else {
-      res.send("Please Log In");
-      console.log("access denied again");
-      }
+
+    // } else {
+    //   res.send("Please Log In");
+    //   console.log("access denied again");
+    //   }
  //res.render("urls_show", templateVars);
 });
 
-app.get("/u/:shortURL", (req, res) => {
-  let data = urlDatabase;
-  let longURL = data[req.params.shortURL];
-  res.redirect(longURL);
-});
 
 // this is the delete route
 app.post("/urls/:id/delete", (req, res)=> {
@@ -331,8 +321,6 @@ app.post("/urls/:id/update", (req, res)=> {
 });
 
 
-
-// *** THIS RETURNS UNDEFINED  ***
 app.get("/u/:shortURL", (req, res) => {
   console.log("X",req.body);
   let longURL = urlDatabase[req.params.shortURL].longURL;
