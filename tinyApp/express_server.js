@@ -149,8 +149,8 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     user: users,
   };
-    console.log("COOKIE", req.cookies["user_id"]);
-    console.log("COOKIE_USER", users[req.cookies["user_id"]].id);
+    // console.log("COOKIE", req.cookies["user_id"]);
+    // console.log("COOKIE_USER", users[req.cookies["user_id"]].id);
 
     if (!req.cookies["user_id"]) {
       res.send("Please Log In");
@@ -167,8 +167,6 @@ app.get("/urls", (req, res) => {
       console.log("access denied again");
     }
   }
-
-
 
 
 });
@@ -266,14 +264,42 @@ app.post("/register", (req, res) => {
 });
 
 
-// show page
+// show page update short url
 app.get("/urls/:id", (req, res) => {
+
   const userId = req.cookies["user_id"];
-  let templateVars = { shortURL: req.params.id, // FIX THIS
+  //console.log("params", req.params.id);
+  let templateVars = { shortURL: req.params.id,
     urls: urlDatabase,
     user: users[userId] };
 
-  res.render("urls_show", templateVars);
+    if (!req.cookies["user_id"]) {
+      res.send("Please Log In");
+      console.log("access denied");
+      return;
+
+      } else if (req.cookies["user_id"] === users[req.cookies["user_id"]].id) {
+
+        templateVars.urls = urlsForUser(req.cookies["user_id"]);
+
+        for (key in templateVars.urls) {
+
+          if (req.params.id === key){
+            console.log("KEY", templateVars.urls.key);
+
+            res.render("urls_show", templateVars);
+
+          } else {
+            res.send("This is not your URL");
+          }
+        }
+
+
+    } else {
+      res.send("Please Log In");
+      console.log("access denied again");
+      }
+ //res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
