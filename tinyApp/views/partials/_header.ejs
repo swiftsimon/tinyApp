@@ -8,7 +8,7 @@
   <h1> TinyApp! </h1>
 
   <% if(user) { %>
-    <h2> Welcome, <%= user.email %>
+    <h2> Welcome, <%= user["req.session.user_id"] %>
     <form method="POST" action="/logout">
         <input type="submit" value="logout">
     </form>

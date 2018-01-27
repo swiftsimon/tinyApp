@@ -282,7 +282,7 @@ app.post("/register", (req, res) => {
 });
 
 
-// show page update short url
+// show page
 app.get("/urls/:id", (req, res) => {
 
    const userId = req.cookies["user_id"];
@@ -305,14 +305,6 @@ app.get("/urls/:id", (req, res) => {
           } else {
             res.send("This is not your URL");
           }
-
-
-
-    // } else {
-    //   res.send("Please Log In");
-    //   console.log("access denied again");
-    //   }
- //res.render("urls_show", templateVars);
 });
 
 
@@ -333,6 +325,8 @@ app.post("/urls/:id", (req, res)=> {
 
 // on update press call this
 app.post("/urls/:id/update", (req, res)=> {
+
+
   console.log("update body", req.body);
   urlDatabase[req.params.id].longURL = req.body.newURL;    //added .longURL
   res.redirect('/urls');
