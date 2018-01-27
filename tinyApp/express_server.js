@@ -123,7 +123,7 @@ app.post("/login", (req, res) => {
 
 // on logout POST call
 app.post("/logout", (req, res) => {
-  //clear the cookie set by submitting username form
+  //clear the existing cookie when user logs out
   //res.clearCookie("user_id");
   req.session = null;                               // clear COOKIE
   res.redirect('/urls');
@@ -148,12 +148,13 @@ app.get("/login", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  const userId = req.session.user_id;
+  // const userId = req.session.user_id;
   let templateVars = {
     urls: urlDatabase,
-    user: users,
+    user: users[req.session.user_id] ? users[req.session.user_id].email : '',
   };
-    // console.log("COOKIE", req.cookies["user_id"]);
+    console.log("Template", templateVars);
+    console.log("COOKIE", req.session.user_id);
     // console.log("COOKIE_USER", users[req.cookies["user_id"]].id);
 
     if (!req.session.user_id) {
@@ -212,6 +213,8 @@ app.get("/urls/new", (req, res) => {
 
 // REGISTER GET endpoint
 app.get("/register", (req, res) => {
+  //if cookie exists redirect to urls
+
   const userId = req.session.user_id;
   let templateVars = {
     urls: urlDatabase,
@@ -340,6 +343,9 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -350,9 +356,6 @@ app.listen(PORT, () => {
 
 
 
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
 
 // app.get("/hello", (req, res) => {
 //   res.end("<html><body>Hello <b>World</b></body></html>\n");
