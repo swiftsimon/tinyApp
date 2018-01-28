@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<body>
+
+    <ul><% for (urlFound in urls) { %>
+        <li>
+          <%= urlFound + ":" + urls[urlFound].longURL %>
+        </li>
+        <!--insert <%= urlFound %> to pull the id number when delete button is pressed -->
+      <% } %>
+    </ul>
+
+      <p><a href='/register'> Register Here! </a></p>
+
+
+</body>
+</html>

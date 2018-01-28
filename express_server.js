@@ -1,7 +1,9 @@
+//tinyApp
+//allow users to register, login in, log out
 
-var express = require("express");
-var app = express();
-var PORT = process.env.port || 8080; //default port is 8080
+const express = require("express");
+const app = express();
+const PORT = process.env.port || 8080; //default port is 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const bcrypt = require('bcrypt');
@@ -37,15 +39,10 @@ var urlDatabase = {
 
 const users = {
   "s7ui9f" : {
-    id: "s7ui9f",
-    email: "user1@example.com",
-    password: "tricky"
+    id: "",
+    email: "",
+    password: ""
   },
-  "ax334d" : {
-    id: "ax334d",
-    email: "user2@example.com",
-    password: "cool555"
-  }
 };
 
 
@@ -176,35 +173,32 @@ app.get("/urls", (req, res) => {
 
 });
 
-    function urlsForUser(id) {
-          let filteredURL = {};
-          for (url in urlDatabase) {
-             if (id === urlDatabase[url].id) {
-            filteredURL[url] = urlDatabase[url];
-          }
-        }
-          return filteredURL;
-        };
+// create a function that filters users accessible URLS
+function urlsForUser(id) {
+  let filteredURL = {};
+    for (url in urlDatabase) {
+      if (id === urlDatabase[url].id) {
+        filteredURL[url] = urlDatabase[url];
+    }
+  }
+  return filteredURL;
+};
 
 app.get("/urls/new", (req, res) => {
 // check if they are logged in
-// console.log("189 cookie", req.cookies["user_id"]);
   for (let key in users) {
     if (key === req.session.user_id) {
       let templateVars = {
     // only give access to that users urls
-      urls: urlDatabase[key],
-      user: users[key],
+        urls: urlDatabase[key],
+        user: users[req.session.user_id] ? users[req.session.user_id].email : '',
       };
-
       //allow access
       res.render("urls_new", templateVars);
       return;
     } //end for loop
-
   }
 // if not  redirect to login page
-    console.log("line 200");
    res.redirect('/login');
 
   //const userId = req.cookies["user_id"];
@@ -326,13 +320,18 @@ app.post("/urls/:id", (req, res)=> {
   res.redirect(`/urls/${short}`); //${short} is a place holder (use ` not " nor ')
 });
 
-// on update press call this
+// on update pressed, call this
 app.post("/urls/:id/update", (req, res)=> {
-
-
-  console.log("update body", req.body);
-  urlDatabase[req.params.id].longURL = req.body.newURL;    //added .longURL
+  urlDatabase[req.params.id].longURL = req.body.newURL;
   res.redirect('/urls');
+});
+
+app.get("/u", (req, res) => {
+
+  let templateVars = { shortURL: req.params.id,
+    urls: urlDatabase,
+   };
+  res.render("urls_u", templateVars);
 });
 
 
@@ -350,17 +349,6 @@ app.get("/urls.json", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-
-
-
-
-
-// app.get("/hello", (req, res) => {
-//   res.end("<html><body>Hello <b>World</b></body></html>\n");
-// });
-
 
 
 
