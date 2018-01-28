@@ -1,5 +1,7 @@
 //tinyApp
 //allow users to register, login in, log out
+// create functionality so users can shorten urls to
+//a randomly generated 6 character string
 
 const express = require("express");
 const app = express();
