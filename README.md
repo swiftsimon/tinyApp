@@ -5,8 +5,8 @@ It allows users to shorten long URLs
 Functionality includes ability to register and login to save the URLs you have created.
 Passwords and cookies are encrypted 
 #Screenshots
-!["description"](https://github.com/swiftsimon/tinyApp/blob/master/docs/Create%20New%20URL.png?raw=true)
-!["sdf"](
+!["Create New Short URL"](https://github.com/swiftsimon/tinyApp/blob/master/docs/Create%20New%20URL.png?raw=true)
+!["View your URLs"](https://github.com/swiftsimon/tinyApp/blob/master/docs/Others%20can%20view%20what%20you%20did.png?raw=true)
 !["sdf"](
 
 ## Dependancies
