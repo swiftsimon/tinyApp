@@ -1,7 +1,7 @@
-//tinyApp
-//allow users to register, login in, log out
-// create functionality so users can shorten urls to
-//a randomly generated 6 character string
+// tinyApp
+// Allow registered users to shorten long URLs to
+  // a randomly generated 6 character string
+// Encrypt passwords and cookies
 
 const express = require("express");
 const app = express();
@@ -68,20 +68,18 @@ app.post("/login", (req, res) => {
  function checkPassword(userEmail, password) {
   // if input fields are empty redirect to register page
   if(!username || !password) {
-    console.log("No entry Login page");
     res.redirect('/register');
   }
   //compare user object to input password to verify
    for (let key in users) {
-    if(users[key].email == username &&
+    if(users[key].email === username &&
       bcrypt.compareSync(password, users[key].password)) {
-      console.log("LOG IN SUCCESS", users[key]);
         return users[key];
       }
    }
-  //console.log("password error");
   return false;
   }
+
   if (passLogin) {
     // redirect to urls
     req.session.user_id = passLogin.id;          // SETCOOKIE
@@ -109,7 +107,7 @@ app.get("/", (req, res) => {
   }
 });
 
-// LOGIN GET call
+// Login GET call
 app.get("/login", (req, res) => {
   res.render("urls_login");
 });
@@ -158,13 +156,13 @@ app.get("/urls/new", (req, res) => {
       //allow access
       res.render("urls_new", templateVars);
       return;
-    } //end for loop
+    }
   }
-// if not  redirect to login page
+// if not logged in redirect to login page
    res.redirect('/login');
 });
 
-// REGISTER GET endpoint
+// Register GET endpoint
 app.get("/register", (req, res) => {
   //if cookie exists redirect to urls
   const userId = req.session.user_id;
@@ -174,7 +172,7 @@ app.get("/register", (req, res) => {
   };  res.render("urls_register", templateVars);
 });
 
-// REGISTER POST
+// Register POST
 app.post("/register", (req, res) => {
   const userId = req.session.user_id;
   let templateVars = {
@@ -186,12 +184,10 @@ app.post("/register", (req, res) => {
   // if email or password are empty strings, send response 400 status code
   function testLoginInput () {
     if(!req.body.email || !req.body.password) {
-    //return status code 404
     res.status(404);
     res.render('404Error');
-  } else if (userExists(req.body.email) == true){
+  } else if (userExists(req.body.email) === true){
     // check if username already exists
-    // send 400 status code
       res.status(400);
       res.render('400error');
   } else {
@@ -201,21 +197,16 @@ app.post("/register", (req, res) => {
         password: bcrypt.hashSync(req.body.password, 10)
       };
 
-    //req.session = null;            // returned error...
-    res.clearCookie("session");             // clear COOKIE by name.  safe??
+    res.clearCookie("session");        // clear COOKIE
     res.clearCookie("session.sig");
-
-  // set the cookie
-    req.session.user_id = randomID;   // SETCOOKIE
-    console.log("USERS", users);
-  //adds new user object
+    req.session.user_id = randomID;   // set COOKIE
     res.redirect('/urls');
   }
  }
 // create function to see if user email exists already
  function userExists(email) {
    for (let key in users) {
-    if(users[key].email == email) {
+    if(users[key].email === email) {
       return true;
     }
   }
@@ -225,7 +216,7 @@ app.post("/register", (req, res) => {
 });
 
 
-// show page
+// 'show' page
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   let templateVars = { shortURL: req.params.id,
@@ -254,7 +245,7 @@ app.post("/urls/:id/delete", (req, res)=> {
 // this is the update page linked from edit button
 app.post("/urls/:id", (req, res)=> {
   let short = req.params.id;
-  res.redirect(`/urls/${short}`); //${short} is a place holder (use `` not "" nor '')
+  res.redirect(`/urls/${short}`);
 });
 
 // on update pressed, call this
@@ -272,7 +263,6 @@ app.get("/u", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL].longURL;
-  console.log("New Long", longURL);
   res.redirect(longURL);
 });
 

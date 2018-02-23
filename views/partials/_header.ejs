@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
-  <title>TinyApp</title>
-</head>
-<body>
-  <h1> TinyApp! </h1>
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body>
+    <h1> TinyApp! </h1>
 
-  <% if(user) { %>
-    <h2> Welcome, <%= user %>
-    <form method="POST" action="/logout">
-        <input type="submit" value="logout">
-    </form>
-
-    <% } else { %>
-     <form method="GET" action="/login">
-        <input type="submit" value="login">
-    </form>
-
+      <% if(user) { %>
+        <h2> Welcome, <%= user %></h2>
+        <form method="POST" action="/logout">
+          <input type="submit" value="logout">
+        </form>
+      <% } else { %>
+        <form method="GET" action="/login">
+          <input type="submit" value="login">
+        </form>
      <% } %>
-
-
-
-</body>
+  </body>
 </html>

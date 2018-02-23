@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
-  <title>TinyApp</title>
-</head>
-<body>
-
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body>
     <header>
         <% include partials/_header %>
     </header>
-    <ul><% for (urlFound in urls) { %>
+    <ul>
+      <% for (urlFound in urls) { %>
         <li>
           <%= urlFound + ":" + urls[urlFound].longURL %>
         </li>
@@ -21,11 +21,7 @@
         <input type="submit" value="edit">
       </form>
       <% } %>
-
     </ul>
-
-    <p><a href='/urls/new'> shorten a new url </a></p>
-
-
-</body>
+  <p><a href='/urls/new'> shorten a new url </a></p>
+  </body>
 </html>

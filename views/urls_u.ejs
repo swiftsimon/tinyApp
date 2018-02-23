@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
-  <title>TinyApp</title>
-</head>
-<body>
-
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body>
     <ul><% for (urlFound in urls) { %>
-        <li>
-          <%= urlFound + " connects to " + urls[urlFound].longURL %>
-        </li>
+      <li>
+        <%= urlFound + " connects to " + urls[urlFound].longURL %>
+      </li>
         <!--insert <%= urlFound %> to pull the id number when delete button is pressed -->
       <% } %>
     </ul>
-      <h3> Try these out now! </h3>
-      <h3> type in your browser localhost:8080/u/(type 6 character code) </h3>
-
-      <p><a href='/register'> Register Here! </a></p>
-
-
-</body>
+    <h3> Try these out now! </h3>
+    <h3> type in your browser localhost:8080/u/(type 6 character code) </h3>
+    <p><a href='/register'> Register Here! </a></p>
+  </body>
 </html>
